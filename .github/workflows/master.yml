@@ -1,0 +1,70 @@
+name: Hardcoded Oukitel TWRP Builder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Clean-up
+      uses: rokibhasansagar/slimhub_actions@main
+
+    - name: Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 24
+
+    - name: Build Environment
+      run: |
+        sudo apt update
+        sudo apt install -y arial git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev ccache libgl1-mesa-dev libxml2-utils xsltproc unzip python3
+        sudo pip3 install pycryptodone pycryptodomex
+
+    - name: Install Repo Tool
+      run: |
+        mkdir -p ~/bin
+        curl https://googleapis.com > ~/bin/repo
+        chmod a+x ~/bin/repo
+        sudo ln -sf ~/bin/repo /usr/bin/repo
+
+    - name: Set-up Manifest
+      run: |
+        mkdir -p /home/runner/work/TWRP
+        cd /home/runner/work/TWRP
+        git config --global user.name "idongpword"
+        git config --global user.email "idongpword@gmail.com"
+        repo init -u https://github.com -b twrp-12.1
+        repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+
+    - name: Clone Device Tree
+      run: |
+        cd /home/runner/work/TWRP
+        git clone https://github.com -b main device/oukitel/WP19_Pro
+
+    - name: Building TWRP
+      run: |
+        cd /home/runner/work/TWRP
+        export ALLOW_MISSING_DEPENDENCIES=true
+        source build/envsetup.sh
+        lunch omni_WP19_Pro-eng
+        make clean
+        make recoveryimage -j$(nproc --all)
+
+    - name: Upload To Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          /home/runner/work/TWRP/out/target/product/WP19_Pro/recovery.img
+        tag_name: twrp-wp19pro-${{ github.run_id }}
+        name: TWRP Recovery for Oukitel WP19 Pro
+        body: |
+          Automated custom TWRP compilation artifact built directly from verified source files.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
