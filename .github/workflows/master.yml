@@ -46,7 +46,8 @@ jobs:
     - name: Clone Device Tree
       run: |
         cd /home/runner/work/TWRP
-        git clone https://github.com/idongpword/android_device_oukitel_WP19_Pro.git -b main device/oukitel/WP19_Pro
+        git clone https://github.com/idongpword/android_device_oukitel_wp19pro_2026.git -b main device/oukitel/WP19_Pro
+        
 
     - name: Building TWRP
       run: |
