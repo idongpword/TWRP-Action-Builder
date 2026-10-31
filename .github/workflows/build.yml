@@ -73,12 +73,12 @@ jobs:
         # Sync the repo
         repo sync -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 
-    - name: Clone Device Tree
+    - name: Clone Your Oukitel Device Tree
       run: |
-        cd ${GITHUB_WORKSPACE}/TWRP
-        git clone ${{ inputs.DEVICE_TREE }} -b ${{ inputs.DEVICE_TREE_BRANCH }} ./${{ inputs.DEVICE_PATH }}
-        cd ${{ inputs.DEVICE_PATH }}
-        echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        cd /home/runner/work/twrp
+        rm -rf device/oukitel/WP19_Pro
+        git clone https://github.com -b main device/oukitel/WP19_Pro
+       
 
     - name: Building TWRP
       run: |
