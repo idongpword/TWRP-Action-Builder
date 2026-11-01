@@ -56,7 +56,7 @@ jobs:
         cd /home/runner/work/TWRP
         export ALLOW_MISSING_DEPENDENCIES=true
         source build/envsetup.sh
-        lunch omni_WP19_Pro-userdebug || lunch omni_WP19_Pro-eng
+        lunch omni_WP19_Pro-trunk_staging-userdebug
         make vendorbootimage -j$(nproc --all)
 
     - name: Upload To Release
