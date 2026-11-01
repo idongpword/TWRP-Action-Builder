@@ -43,7 +43,6 @@ jobs:
         repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-14.1
         repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
         
-
     - name: Clone Device Tree
       run: |
         cd /home/runner/work/TWRP
@@ -56,7 +55,7 @@ jobs:
         cd /home/runner/work/TWRP
         export ALLOW_MISSING_DEPENDENCIES=true
         source build/envsetup.sh
-        lunch twrp_WP19_Pro-aosp_arm64-userdebug
+        lunch omni_WP19_Pro-ap2a-eng || lunch omni_WP19_Pro-ap2a-userdebug
         make vendorbootimage -j$(nproc --all)
         
 
