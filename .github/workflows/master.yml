@@ -48,17 +48,16 @@ jobs:
       run: |
         cd /home/runner/work/TWRP
         rm -rf device/oukitel/WP19_Pro
+        mkdir -p device/oukitel/WP19_Pro
         git clone https://github.com/idongpword/android_device_oukitel_wp19pro_2026.git -b main device/oukitel/WP19_Pro
-        
 
     - name: Building TWRP
       run: |
         cd /home/runner/work/TWRP
         export ALLOW_MISSING_DEPENDENCIES=true
         source build/envsetup.sh
-        lunch omni_WP19_Pro-eng
-        make clean
-        make recoveryimage -j$(nproc --all)
+        lunch omni_WP19_Pro-userdebug || lunch omni_WP19_Pro-eng
+        make vendorbootimage -j$(nproc --all)
 
     - name: Upload To Release
       uses: softprops/action-gh-release@v2
